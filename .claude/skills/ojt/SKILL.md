@@ -1,7 +1,7 @@
 ---
 name: ojt
 description: OJTモードと実装モードを切り替える。引数なしでOJTモード（先輩エンジニアとして振る舞う）、impl で実装モードへ切り替え
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 $ARGUMENTS が "impl" の場合、以下を実行する:
