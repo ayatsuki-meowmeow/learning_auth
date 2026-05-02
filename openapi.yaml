@@ -20,24 +20,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
-    post:
-      tags:
-        - users
-      summary: Create user
-      operationId: createUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateUserRequest"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
   /users/{id}:
     get:
       tags:
@@ -77,6 +59,25 @@ paths:
           description: Deleted
         "404":
           description: Not found
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: register Auth Info
+      operationId: registerAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterAuthRequest"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 components:
   schemas:
     User:
@@ -102,11 +103,12 @@ components:
         updatedAt:
           type: string
           format: date-time
-    CreateUserRequest:
+    RegisterAuthRequest:
       type: object
       required:
         - name
         - email
+        - password
       properties:
         name:
           type: string
@@ -115,3 +117,8 @@ components:
           type: string
           format: email
           maxLength: 255
+        password:
+          type: string
+          maxLength: 255
+        
+      
