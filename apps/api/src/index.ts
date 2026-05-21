@@ -4,10 +4,18 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { join } from 'path'
 import { users } from './routes/users'
 import { auth } from './routes/auth'
+import { ConflictError } from './lib/errors'
 
 const app = new Hono()
 
 app.use(cors())
+
+app.onError((err, c) => {
+  if (err instanceof ConflictError) {
+    return c.json({ error: err.message }, 409)
+  }
+  return c.json({ error: 'Internal Server Error' }, 500)
+})
 
 app.get('/openapi.yaml', async (c) => {
   const file = Bun.file(join(import.meta.dir, '../../../openapi.yaml'))
