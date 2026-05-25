@@ -14,7 +14,8 @@ sessions.post('/', zValidator('json', loginSchema), async (c) => {
       switch (error.kind) {
         case 'unauthorized': return c.json({ error: 'Invalid credentials' }, 401)
         case 'db':
-        case 'unknown': return c.json({ error: 'Internal Server Error' }, 500)
+        case 'unknown':
+        default: return c.json({ error: 'Internal Server Error' }, 500)
       }
     },
   )
