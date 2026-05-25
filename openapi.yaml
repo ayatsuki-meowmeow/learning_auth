@@ -59,7 +59,7 @@ paths:
           description: Deleted
         "404":
           description: Not found
-  /auth/login:
+  /sessions:
     post:
       tags:
         - auth
