@@ -23,5 +23,8 @@
   ],
   "dependencies": {
     "neverthrow": "^8.2.0"
+  },
+  "patchedDependencies": {
+    "eslint-plugin-neverthrow@1.1.4": "patches/eslint-plugin-neverthrow@1.1.4.patch"
   }
 }

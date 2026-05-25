@@ -25,9 +25,12 @@
     "@repo/typescript-config": "*",
     "@types/bun": "latest",
     "@types/pg": "^8.20.0",
+    "@typescript-eslint/parser": "^8.59.4",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9.39.1",
+    "eslint-plugin-neverthrow": "^1.1.4",
     "openapi-typescript": "^7.13.0",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "typescript-eslint": "^8.59.4"
   }
 }
