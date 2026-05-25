@@ -3,7 +3,7 @@ import { users } from './users';
 
 export const auth = pgTable('auth', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id),
+  userId: uuid('user_id').notNull().unique().references(() => users.id),
   passwordHash: varchar('password_hash').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
