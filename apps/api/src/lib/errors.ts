@@ -1,6 +1,4 @@
-export class ConflictError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'ConflictError'
-  }
-}
+export type AppError =
+  | { kind: 'conflict'; message: string }
+  | { kind: 'db'; cause: unknown }
+  | { kind: 'unknown'; cause: unknown }
