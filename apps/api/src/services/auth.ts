@@ -2,15 +2,13 @@ import { db } from '../db'
 import { users, auth } from '../db/schema'
 import type { RegisterInput } from '@repo/schema'
 import type { UserSelect } from '../db/schema'
-import { ConflictError } from '../lib/errors'
+import { fromDb, type AppResultAsync } from '../lib/result'
 
-const PG_UNIQUE_VIOLATION = '23505'
+export function registerUser(input: RegisterInput): AppResultAsync<UserSelect> {
+  const task = async () => {
+    const passwordHash = await Bun.password.hash(input.password, { algorithm: 'argon2id' })
 
-export async function registerUser(input: RegisterInput): Promise<UserSelect> {
-  const passwordHash = await Bun.password.hash(input.password, { algorithm: 'argon2id' })
-
-  try {
-    return await db.transaction(async (tx) => {
+    return db.transaction(async (tx) => {
       const [user] = await tx.insert(users).values({
         name: input.name,
         email: input.email,
@@ -25,10 +23,7 @@ export async function registerUser(input: RegisterInput): Promise<UserSelect> {
 
       return user
     })
-  } catch (err) {
-    if ((err as any).code === PG_UNIQUE_VIOLATION || (err as any).cause?.code === PG_UNIQUE_VIOLATION) {
-      throw new ConflictError('Email already registered')
-    }
-    throw err
   }
+
+  return fromDb(task(), 'Email already registered')
 }

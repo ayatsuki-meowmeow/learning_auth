@@ -7,8 +7,17 @@ const auth = new Hono()
 
 auth.post('/register', zValidator('json', registerSchema), async (c) => {
   const data = c.req.valid('json')
-  const user = await registerUser(data)
-  return c.json(user, 201)
+  const result = await registerUser(data)
+  return result.match(
+    (user) => c.json(user, 201),
+    (error) => {
+      switch (error.kind) {
+        case 'conflict': return c.json({ error: error.message }, 409)
+        case 'db':
+        case 'unknown':  return c.json({ error: 'Internal Server Error' }, 500)
+      }
+    },
+  )
 })
 
 export { auth }
