@@ -4,6 +4,7 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { join } from 'path'
 import { users } from './routes/users'
 import { auth } from './routes/auth'
+import { sessions } from './routes/sessions'
 const app = new Hono()
 
 app.use(cors())
@@ -23,6 +24,7 @@ app.get('/doc', swaggerUI({ url: '/openapi.yaml' }))
 
 app.route('/users', users)
 app.route('/auth', auth)
+app.route('/sessions', sessions)
 
 export default {
   port: 8080,
