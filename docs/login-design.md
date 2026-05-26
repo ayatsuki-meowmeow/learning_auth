@@ -53,3 +53,42 @@ routes/sessions.ts     POST /sessions を定義（新規）
 
 > `packages/schema` は BE・FE 共有パッケージ。
 > フロントエンド実装フェーズでそのまま再利用でき、バリデーションの二重定義を防げる。
+
+## タイミング攻撃対策の学習メモ
+
+### DUMMY_HASH による均一化の残存制約
+
+ユーザーが存在しない場合でも argon2id verify を走らせる（DUMMY_HASH）ことで応答時間を均一化しているが、2点の制約が残る。
+
+**1. DB クエリ数の非対称**
+
+| ケース | 処理 |
+|--------|------|
+| ユーザーが存在する | `getUserByEmail`（DB）→ `getAuthByUserId`（DB）→ argon2id verify |
+| ユーザーが存在しない | `getUserByEmail`（DB）→ `Promise.resolve(undefined)`（DB なし）→ argon2id verify |
+
+`getAuthByUserId` のネットワーク往復（~1–5ms）分の差が残る。argon2id の処理時間（~100–400ms）が支配的なため統計的手法でしか検出できないが、厳密には均一ではない。
+
+**2. DUMMY_HASH とユーザーハッシュのコストパラメータ分離**
+
+`registerUser` と `DUMMY_HASH` の生成箇所が独立しているため、`registerUser` 側のコストパラメータ（memory, iterations）を変更した際に `DUMMY_HASH` 側を更新し忘れると処理時間が乖離してタイミング差が生じる。
+
+### 固定待機時間（例: 3秒）は有効か
+
+応答時間を一律3秒にすれば制約1・2の両方を解決できるが、**別の問題が生まれる**。
+
+- 攻撃者が大量リクエストを投げると各リクエストが3秒間コネクションを占有し続け、DoS の踏み台になりやすい
+- UX も悪化する
+
+### より現実的なパターン
+
+「最低でも N ms はかかる」という下限保証の方が安全。
+
+```ts
+const start = Date.now();
+// ... 処理 ...
+const elapsed = Date.now() - start;
+await sleep(Math.max(0, MIN_MS - elapsed)); // 余った時間だけ待つ
+```
+
+処理が速く終わった分だけ待つので応答時間は均一化しつつ、処理完了後すぐコネクションを解放できる。ただしこれも DoS リスクは残るため、**レートリミットと組み合わせるのが基本**。
