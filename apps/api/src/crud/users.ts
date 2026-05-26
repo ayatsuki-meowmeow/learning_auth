@@ -17,6 +17,11 @@ export async function createUser(data: UserInsert): Promise<UserSelect> {
   return user
 }
 
+export async function getUserByEmail(email: string): Promise<UserSelect | undefined> {
+  const [user] = await db.select().from(users).where(eq(users.email, email))
+  return user
+}
+
 export async function deleteUser(id: string): Promise<boolean> {
   const result = await db.delete(users).where(eq(users.id, id)).returning()
   return result.length > 0
