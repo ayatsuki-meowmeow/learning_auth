@@ -14,7 +14,8 @@ auth.post('/register', zValidator('json', registerSchema), async (c) => {
       switch (error.kind) {
         case 'conflict': return c.json({ error: error.message }, 409)
         case 'db':
-        case 'unknown':  return c.json({ error: 'Internal Server Error' }, 500)
+        case 'unknown':
+        default: return c.json({ error: 'Internal Server Error' }, 500)
       }
     },
   )
