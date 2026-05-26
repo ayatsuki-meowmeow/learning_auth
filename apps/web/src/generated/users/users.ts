@@ -24,7 +24,6 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  CreateUserRequest,
   User
 } from '../model';
 
@@ -148,88 +147,6 @@ export function useGetUsers<TData = Awaited<ReturnType<typeof getUsers>>, TError
 
 
 /**
- * @summary Create user
- */
-export type createUserResponse201 = {
-  data: User
-  status: 201
-}
-
-export type createUserResponseSuccess = (createUserResponse201) & {
-  headers: Headers;
-};
-;
-
-export type createUserResponse = (createUserResponseSuccess)
-
-export const getCreateUserUrl = () => {
-
-
-
-
-  return `/users`
-}
-
-export const createUser = async (createUserRequest: CreateUserRequest, options?: RequestInit): Promise<createUserResponse> => {
-
-  return fetcher<createUserResponse>(getCreateUserUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      createUserRequest,)
-  }
-);}
-
-
-
-
-export const getCreateUserMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext> => {
-
-const mutationKey = ['createUser'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createUser>>, {data: CreateUserRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  createUser(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
-    export type CreateUserMutationBody = CreateUserRequest
-    export type CreateUserMutationError = unknown
-
-    /**
- * @summary Create user
- */
-export const useCreateUser = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError,{data: CreateUserRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createUser>>,
-        TError,
-        {data: CreateUserRequest},
-        TContext
-      > => {
-      return useMutation(getCreateUserMutationOptions(options), queryClient);
-    }
-    /**
  * @summary Get user by ID
  */
 export type getUserByIdResponse200 = {

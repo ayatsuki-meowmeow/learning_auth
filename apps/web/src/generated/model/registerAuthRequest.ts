@@ -5,9 +5,11 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface CreateUserRequest {
+export interface RegisterAuthRequest {
   /** @maxLength 255 */
   name: string;
   /** @maxLength 255 */
   email: string;
+  /** @maxLength 255 */
+  password: string;
 }
