@@ -62,7 +62,7 @@ paths:
   /sessions:
     post:
       tags:
-        - auth
+        - sessions
       summary: Login
       operationId: login
       requestBody:
